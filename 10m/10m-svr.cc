@@ -55,7 +55,7 @@ int main(int argc, const char *argv[]) {
         TcpConnPtr report = TcpConn::createConnection(&base, "127.0.0.1", man_port, 3000);
         report->onMsg(new LineCodec, [&](const TcpConnPtr &con, Slice msg) {
             if (msg == "exit") {
-                info("recv exit msg from master, so exit");
+                handy_info_log("recv exit msg from master, so exit");
                 base.exit();
             }
         });
@@ -72,7 +72,7 @@ int main(int argc, const char *argv[]) {
         master->onConnMsg(new LineCodec, [&](const TcpConnPtr &con, Slice msg) {
             auto fs = msg.split(' ');
             if (fs.size() != 7) {
-                error("number of fields is %lu expected 7", fs.size());
+                handy_error_log("number of fields is %lu expected 7", fs.size());
                 return;
             }
             Report &c = subs[atoi(fs[0].data())];
@@ -91,5 +91,5 @@ int main(int argc, const char *argv[]) {
                       3000);
         base.loop();
     }
-    info("program exited");
+    handy_info_log("program exited");
 }

@@ -25,7 +25,7 @@ int main(int argc, const char* argv[]) {
     Signal::signal(SIGINT, [&]{ base.exit(); }); 
     TcpServer echo(&base); //创建服务器
     int r = echo.bind("", 2099); //绑定端口
-    exitif(r, "bind failed %d %s", errno, strerror(errno));
+    handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
     echo.onConnRead([](const TcpConnPtr& con) {
         con->send(con->getInput()); // echo 读取的数据
     });
@@ -76,7 +76,7 @@ TimerId runAt(int64_t milli, const Task& task, int64_t interval=0)
 //取消定时任务，若timer已经过期，则忽略
 bool cancel(TimerId timerid);
 
-TimerId tid = base.runAfter(1000, []{ info("a second passed"); });
+TimerId tid = base.runAfter(1000, []{ handy_info_log("a second passed"); });
 base.cancel(tid);
 ```
 [例子程序](examples/timer.cc)
@@ -104,10 +104,10 @@ TcpConnPtr con = TcpConn::createConnection(&base, host, port); #第一个参数�
 ```c
 TcpConnPtr con = TcpConn::createConnection(&base, host, port);
 con->onState([=](const TcpConnPtr& con) {
-    info("onState called state: %d", con->getState());
+    handy_info_log("onState called state: %d", con->getState());
 });
 con->onRead([](const TcpConnPtr& con){
-    info("recv %lu bytes", con->getInput().size());
+    handy_info_log("recv %lu bytes", con->getInput().size());
     con->send("ok");
     con->getInput().clear();
 });
@@ -142,7 +142,7 @@ void onMsg(CodecBase* codec, const MsgCallBack& cb);
 void sendMsg(Slice msg);
 
 con->onMsg(new LineCodec, [](const TcpConnPtr& con, Slice msg) {
-    info("recv msg: %.*s", (int)msg.size(), msg.data());
+    handy_info_log("recv msg: %.*s", (int)msg.size(), msg.data());
     con->sendMsg("hello");
 });
 ```
@@ -168,7 +168,7 @@ TcpServer echo(&base);
 ```c
 TcpServer echo(&base); //创建服务器
 int r = echo.bind("", 2099); //绑定端口
-exitif(r, "bind failed %d %s", errno, strerror(errno));
+handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
 echo.onConnRead([](const TcpConnPtr& con) {
     con->send(con->getInput()); // echo 读取的数据
 });
@@ -199,7 +199,7 @@ chat.onConnCreate([&]{
 //使用示例
 HttpServer sample(&base);
 int r = sample.bind("", 8081);
-exitif(r, "bind failed %d %s", errno, strerror(errno));
+handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
 sample.onGet("/hello", [](const HttpConnPtr& con) {
    HttpResponse resp;
    resp.body = Slice("hello world");
@@ -216,7 +216,7 @@ void onMsg(CodecBase* codec, const RetMsgCallBack& cb);
 
 hsha.onMsg(new LineCodec, [](const TcpConnPtr& con, const string& input){
     int ms = rand() % 1000;
-    info("processing a msg");
+    handy_info_log("processing a msg");
     usleep(ms * 1000);
     return util::format("%s used %d ms", input.c_str(), ms);
 });

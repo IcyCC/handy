@@ -11,7 +11,7 @@ void ProtoMsgDispatcher::handle(TcpConnPtr con, Message *msg) {
     if (p != protocbs_.end()) {
         p->second(con, msg);
     } else {
-        error("unknown message type %s", msg->GetTypeName().c_str());
+        handy_error_log("unknown message type %s", msg->GetTypeName().c_str());
     }
 }
 
@@ -21,14 +21,14 @@ void ProtoMsgDispatcher::handle(TcpConnPtr con, Message *msg) {
 // protobuf data
 Message *ProtoMsgCodec::decode(Buffer &s) {
     if (s.size() < 8) {
-        error("buffer is too small size: %lu", s.size());
+        handy_error_log("buffer is too small size: %lu", s.size());
         return NULL;
     }
     char *p = s.data();
     uint32_t msglen = *(uint32_t *) p;
     uint32_t namelen = *(uint32_t *) (p + 4);
     if (s.size() < msglen || s.size() < 4 + namelen) {
-        error("buf format error size %lu msglen %d namelen %d", s.size(), msglen, namelen);
+        handy_error_log("buf format error size %lu msglen %d namelen %d", s.size(), msglen, namelen);
         return NULL;
     }
     string typeName(p + 8, namelen);
@@ -41,12 +41,12 @@ Message *ProtoMsgCodec::decode(Buffer &s) {
         }
     }
     if (msg == NULL) {
-        error("cannot create Message for %s", typeName.c_str());
+        handy_error_log("cannot create Message for %s", typeName.c_str());
         return NULL;
     }
     int r = msg->ParseFromArray(p + 8 + namelen, msglen - 8 - namelen);
     if (!r) {
-        error("bad msg for protobuf");
+        handy_error_log("bad msg for protobuf");
         delete msg;
         return NULL;
     }

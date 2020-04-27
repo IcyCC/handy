@@ -8,11 +8,11 @@ int main(int argc, const char *argv[]) {
     if (argc > 1) {
         threads = atoi(argv[1]);
     }
-    setloglevel("TRACE");
+    handy_setloglevel("TRACE");
     MultiBase base(threads);
     HttpServer sample(&base);
     int r = sample.bind("", 8081);
-    exitif(r, "bind failed %d %s", errno, strerror(errno));
+    handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
     sample.onGet("/hello", [](const HttpConnPtr &con) {
         string v = con.getRequest().version;
         HttpResponse resp;

@@ -6,19 +6,19 @@ using namespace handy;
 char buf[20 * 1024 * 1024];
 
 int main(int argc, const char *argv[]) {
-    setloglevel("TRACE");
+    handy_setloglevel("TRACE");
     int sended = 0, total = 1054768 * 100;
     memset(buf, 'a', sizeof buf);
     EventBase bases;
     Signal::signal(SIGINT, [&] { bases.exit(); });
     TcpServer echo(&bases);
     int r = echo.bind("", 2099);
-    exitif(r, "bind failed %d %s", errno, strerror(errno));
+    handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
     auto sendcb = [&](const TcpConnPtr &con) {
         while (con->getOutput().size() == 0 && sended < total) {
             con->send(buf, sizeof buf);
             sended += sizeof buf;
-            info("%d bytes sended output size: %lu", sended, con->getOutput().size());
+            handy_info_log("%d bytes sended output size: %lu", sended, con->getOutput().size());
         }
         if (sended >= total) {
             con->close();
@@ -39,7 +39,7 @@ int main(int argc, const char *argv[]) {
         EventBase base2;
         TcpConnPtr con = TcpConn::createConnection(&base2, "127.0.0.1", 2099);
         con->onRead([](const TcpConnPtr &con) {
-            info("recv %lu bytes", con->getInput().size());
+            handy_info_log("recv %lu bytes", con->getInput().size());
             con->getInput().clear();
             sleep(1);
         });
@@ -52,5 +52,5 @@ int main(int argc, const char *argv[]) {
     });
     bases.loop();
     th.join();
-    info("program exited");
+    handy_info_log("program exited");
 }

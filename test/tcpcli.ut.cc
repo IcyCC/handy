@@ -11,9 +11,9 @@ TcpConnPtr connectto(EventBase *base, const char *host, unsigned short port) {
         if (con->getState() == TcpConn::Connected) {
             con->send("GET / HTTP/1.1\r\n\r\n");
         } else if (con->getState() == TcpConn::Closed) {
-            info("connection to %s %d closed", host, port);
+            handy_info_log("connection to %s %d closed", host, port);
         } else if (con->getState() == TcpConn::Failed) {
-            info("connect to %s %d failed", host, port);
+            handy_info_log("connect to %s %d failed", host, port);
         }
     });
     con1->onRead([=](const TcpConnPtr con) {

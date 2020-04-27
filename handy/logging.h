@@ -22,25 +22,25 @@
 
 #endif
 
-#define trace(...) hlog(Logger::LTRACE, __VA_ARGS__)
-#define debug(...) hlog(Logger::LDEBUG, __VA_ARGS__)
-#define info(...) hlog(Logger::LINFO, __VA_ARGS__)
-#define warn(...) hlog(Logger::LWARN, __VA_ARGS__)
-#define error(...) hlog(Logger::LERROR, __VA_ARGS__)
-#define fatal(...) hlog(Logger::LFATAL, __VA_ARGS__)
-#define fatalif(b, ...)                        \
+#define handy_trace_log(...) hlog(Logger::LTRACE, __VA_ARGS__)
+#define handy_debug_log(...) hlog(Logger::LDEBUG, __VA_ARGS__)
+#define handy_info_log(...) hlog(Logger::LINFO, __VA_ARGS__)
+#define handy_warn_log(...) hlog(Logger::LWARN, __VA_ARGS__)
+#define handy_error_log(...) hlog(Logger::LERROR, __VA_ARGS__)
+#define handy_fatal_log(...) hlog(Logger::LFATAL, __VA_ARGS__)
+#define handy_fatalif_log(b, ...)                        \
     do {                                       \
         if ((b)) {                             \
             hlog(Logger::LFATAL, __VA_ARGS__); \
         }                                      \
     } while (0)
-#define check(b, ...)                          \
+#define handy_check_log(b, ...)                          \
     do {                                       \
         if ((b)) {                             \
             hlog(Logger::LFATAL, __VA_ARGS__); \
         }                                      \
     } while (0)
-#define exitif(b, ...)                         \
+#define handy_exitif_log(b, ...)                         \
     do {                                       \
         if ((b)) {                             \
             hlog(Logger::LERROR, __VA_ARGS__); \
@@ -48,8 +48,8 @@
         }                                      \
     } while (0)
 
-#define setloglevel(l) Logger::getLogger().setLogLevel(l)
-#define setlogfile(n) Logger::getLogger().setFileName(n)
+#define handy_setloglevel(l) Logger::getLogger().setLogLevel(l)
+#define handy_setlogfile(n) Logger::getLogger().setFileName(n)
 
 namespace handy {
 

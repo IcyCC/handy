@@ -51,7 +51,7 @@ int main(int argc, const char *argv[]) {
         int recved = 0;
 
         vector<TcpConnPtr> allConns;
-        info("creating %d connections", conn_count);
+        handy_info_log("creating %d connections", conn_count);
         for (int k = 0; k < create_seconds * 10; k++) {
             base.runAfter(100 * k, [&] {
                 int c = conn_count / create_seconds / 10;
@@ -103,7 +103,7 @@ int main(int argc, const char *argv[]) {
         TcpConnPtr report = TcpConn::createConnection(&base, "127.0.0.1", man_port, 3000);
         report->onMsg(new LineCodec, [&](const TcpConnPtr &con, Slice msg) {
             if (msg == "exit") {
-                info("recv exit msg from master, so exit");
+                handy_info_log("recv exit msg from master, so exit");
                 base.exit();
             }
         });
@@ -122,7 +122,7 @@ int main(int argc, const char *argv[]) {
         master->onConnMsg(new LineCodec, [&](const TcpConnPtr &con, Slice msg) {
             auto fs = msg.split(' ');
             if (fs.size() != 9) {
-                error("number of fields is %lu expected 7", fs.size());
+                handy_error_log("number of fields is %lu expected 7", fs.size());
                 return;
             }
             Report &c = subs[atoi(fs[0].data())];
@@ -143,9 +143,9 @@ int main(int argc, const char *argv[]) {
         Signal::signal(SIGCHLD, [] {
             int status = 0;
             wait(&status);
-            error("wait result: status: %d is signaled: %d signal: %d", status, WIFSIGNALED(status), WTERMSIG(status));
+            handy_error_log("wait result: status: %d is signaled: %d signal: %d", status, WIFSIGNALED(status), WTERMSIG(status));
         });
         base.loop();
     }
-    info("program exited");
+    handy_info_log("program exited");
 }

@@ -61,7 +61,7 @@ void Logger::setFileName(const string &filename) {
         fd_ = fd;
     } else {
         int r = dup2(fd, fd_);
-        fatalif(r < 0, "dup2 failed");
+        handy_fatalif_log(r < 0, "dup2 failed");
         close(fd);
     }
 }

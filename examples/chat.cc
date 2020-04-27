@@ -5,14 +5,14 @@ using namespace std;
 using namespace handy;
 
 int main(int argc, const char *argv[]) {
-    setloglevel("TRACE");
+    handy_setloglevel("TRACE");
     map<intptr_t, TcpConnPtr> users;  //生命周期比连接更长，必须放在Base前
     EventBase base;
     Signal::signal(SIGINT, [&] { base.exit(); });
 
     int userid = 1;
     TcpServerPtr chat = TcpServer::startServer(&base, "", 2099);
-    exitif(chat == NULL, "start tcpserver failed");
+    handy_exitif_log(chat == NULL, "start tcpserver failed");
     chat->onConnCreate([&] {
         TcpConnPtr con(new TcpConn);
         con->onState([&](const TcpConnPtr &con) {
@@ -56,6 +56,6 @@ int main(int argc, const char *argv[]) {
         return con;
     });
     base.loop();
-    info("program exited");
+    handy_info_log("program exited");
     return 0;
 }

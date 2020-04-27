@@ -5,7 +5,7 @@ using namespace std;
 using namespace handy;
 
 void handleQuery(TcpConnPtr con, Query *query) {
-    info("query recved name %s id %d", query->name().c_str(), query->id());
+    handy_info_log("query recved name %s id %d", query->name().c_str(), query->id());
     delete query;
     con->getBase()->exit();
 }
@@ -18,7 +18,7 @@ void testencode() {
     ProtoMsgCodec dis;
     dis.encode(&q, b);
     Query *p = dynamic_cast<Query *>(dis.decode(b));
-    info("p name %s id %d", p->name().c_str(), p->id());
+    handy_info_log("p name %s id %d", p->name().c_str(), p->id());
     delete p;
 }
 int main() {
@@ -28,7 +28,7 @@ int main() {
     EventBase base;
     TcpServer echo(&base);
     int r = echo.bind("", 2099);
-    exitif(r, "bind failed %d %s", errno, strerror(errno));
+    handy_exitif_log(r, "bind failed %d %s", errno, strerror(errno));
     ProtoMsgDispatcher dispatch;
     echo.onConnRead([&](TcpConnPtr con) {
         if (ProtoMsgCodec::msgComplete(con->getInput())) {
@@ -36,7 +36,7 @@ int main() {
             if (msg) {
                 dispatch.handle(con, msg);
             } else {
-                error("bad msg from connection data");
+                handy_error_log("bad msg from connection data");
                 con->close();
             }
         }

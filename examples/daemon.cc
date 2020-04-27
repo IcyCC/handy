@@ -14,7 +14,7 @@ int main(int argc, const char *argv[]) {
     Daemon::daemonProcess(argv[1], pidfile.c_str());
     Conf conf;
     int r = conf.parse(conffile.c_str());
-    fatalif(r, "config file parse failed %s", conffile.c_str());
+    handy_fatalif_log(r, "config file parse failed %s", conffile.c_str());
     string logfile = conf.get("", "logfile", program + ".log");
     string loglevel = conf.get("", "loglevel", "INFO");
     long rotateInterval = conf.getInteger("", "log_rotate_interval", 86400);
@@ -26,9 +26,9 @@ int main(int argc, const char *argv[]) {
     EventBase base;
     Signal::signal(SIGINT, [&] { base.exit(); });
     TcpServerPtr echo = TcpServer::startServer(&base, "", 2099);
-    exitif(echo == NULL, "start tcp server failed");
+    handy_exitif_log(echo == NULL, "start tcp server failed");
     echo->onConnRead([](const TcpConnPtr &con) { con->send(con->getInput()); });
-    base.runAfter(1000, [] { info("log"); }, 1000);
+    base.runAfter(1000, [] { handy_info_log("log"); }, 1000);
     base.loop();
-    info("program exited");
+    handy_info_log("program exited");
 }
